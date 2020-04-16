@@ -4,6 +4,14 @@ from selenium import webdriver
 import csv
 import time
 
+def calc_bmi(ht, wt):
+    try:
+        bmi = int(wt)/(int(ht)/100)**2
+    except:
+        bmi = ''
+    finally:
+        return bmi
+
 driver = webdriver.Chrome("/usr/lib/chromium/chromedriver")
 driver.get("https://www.8a.nu/scorecard/ranking/")
 time.sleep(1)
@@ -22,8 +30,8 @@ while(i < 10):
 
     if i >= startI:
         csvfile = open('data/route-data/routeData'+str(i)+'.csv', 'w', newline='') 
-        writer = csv.writer(csvfile, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-        writer.writerow(['Placing', 'Score', 'Name', 'DoB', 'Country', 'Height', 'Weight', 'Started Climbing'])
+        writer = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        writer.writerow(['Placing', 'Score', 'Name', 'DoB', 'Country', 'Height', 'Weight', 'Started Climbing', 'BMI'])
         for row in table.findAll("tr"):
             cells = row.findAll("td")
             if len(cells) == 8:
@@ -32,9 +40,6 @@ while(i < 10):
                 name = cells[4].find(text=True)
                 dob = cells[5].find(text=True)
                 country = cells[6].find(text=True)
-                if type(dob) != type(1):
-                    dob = 0
-                age = 2020 - dob
                 
                 ## Go To Persons Page and get more data
                 print("LOG: attempting to reach site: "+str(cells[4].find('a')['href']))
@@ -64,8 +69,11 @@ while(i < 10):
                 driver2.close()
                 driver2.quit()
                 ## Write to CSV:
+
+                bmi = calc_bmi(height, weight)
+
                 print("LOG: Writing to CSV. placing: " + str(placing))
-                writer.writerow([placing, score, name, age, country, height, weight, yrsclimbing])
+                writer.writerow([placing, score, name, dob, country, height, weight, yrsclimbing, bmi])
         csvfile.close()
     
     if i > 0:
