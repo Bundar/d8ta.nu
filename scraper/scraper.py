@@ -3,6 +3,22 @@ import pandas as pd
 from selenium import webdriver
 import csv
 import time
+import sys
+
+args = sys.argv
+print("Working on: " + str(args[1]))
+if args[1] == 'routes':
+    tableId = "ctl00_ContentPlaceholder_GridViewRankingRoute"
+    filePath = 'data/route-data/routeData'
+    nextButt0 = '/html/body/form/div[3]/table/tbody/tr[2]/td[2]/div/div[1]/div[2]/table/tbody/tr[2]/td[1]/div/table/tbody/tr[101]/td/table/tbody/tr/td/a'
+    nextButt1 = '/html/body/form/div[3]/table/tbody/tr[2]/td[2]/div/div[1]/div[2]/table/tbody/tr[2]/td[1]/div/table/tbody/tr[101]/td/table/tbody/tr/td[2]/a'
+    print("Route env set up")
+else:
+    tableId = "ctl00_ContentPlaceholder_GridViewBoulder"
+    filePath = 'data/boulder-data/boulderData'
+    nextButt0 = '/html/body/form/div[3]/table/tbody/tr[2]/td[2]/div/div[1]/div[2]/table/tbody/tr[2]/td[2]/div/table/tbody/tr[101]/td/table/tbody/tr/td/a'
+    nextButt1 = '/html/body/form/div[3]/table/tbody/tr[2]/td[2]/div/div[1]/div[2]/table/tbody/tr[2]/td[2]/div/table/tbody/tr[101]/td/table/tbody/tr/td[2]/a'
+    print("Boulder env set up")
 
 def calc_bmi(ht, wt):
     try:
@@ -12,24 +28,27 @@ def calc_bmi(ht, wt):
     finally:
         return bmi
 
+
 driver = webdriver.Chrome("/usr/lib/chromium/chromedriver")
 driver.get("https://www.8a.nu/scorecard/ranking/")
 time.sleep(1)
 
+print("Driver set up")
+
 i = 0
 startI = 0
-while(i < 10):
+while(i < 1):
     print("LOG: Processing data file #" + str(i))
     content = driver.page_source
     soup = BeautifulSoup(content, features="lxml")
-    table = soup.find(id="ctl00_ContentPlaceholder_GridViewRankingRoute")
+    table = soup.find(id=tableId)
     
     if table == None:
         print(str(i) + ": Couldnt find the table... ")
         print(table)
 
     if i >= startI:
-        csvfile = open('data/route-data/routeData'+str(i)+'.csv', 'w', newline='') 
+        csvfile = open(filePath+str(i)+'.csv', 'w', newline='') 
         writer = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         writer.writerow(['Placing', 'Score', 'Name', 'DoB', 'Country', 'Height', 'Weight', 'Started Climbing', 'BMI'])
         for row in table.findAll("tr"):
@@ -77,9 +96,9 @@ while(i < 10):
         csvfile.close()
     
     if i > 0:
-        driver.find_element_by_xpath('/html/body/form/div[3]/table/tbody/tr[2]/td[2]/div/div[1]/div[2]/table/tbody/tr[2]/td[1]/div/table/tbody/tr[101]/td/table/tbody/tr/td[2]/a').click()
+        driver.find_element_by_xpath(nextButt1).click()
     else:
-        driver.find_element_by_xpath('/html/body/form/div[3]/table/tbody/tr[2]/td[2]/div/div[1]/div[2]/table/tbody/tr[2]/td[1]/div/table/tbody/tr[101]/td/table/tbody/tr/td/a').click()
+        driver.find_element_by_xpath(nextButt0).click()
     
     i = i + 1
     driver.refresh()

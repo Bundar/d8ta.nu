@@ -1,5 +1,17 @@
+import sys
 import csv
 import unicodedata
+
+args = sys.argv
+print("Working on: " + str(args[1]))
+if args[1] == 'routes':
+    path = './data/route-data/'
+    filename = 'routeData'
+    print("Route env set up")
+else:
+    path = './data/boulder-data/'
+    filename = 'boulderData'
+    print("Boulder env set up")
 
 def validate_p(p):
     return p
@@ -31,14 +43,7 @@ def calc_bmi(ht, wt):
         return bmi
 
 def main():
-    boulderpath = './data/boulder-data/'
-    boulderFile = 'boulderData'
-
-    routepath = './data/route-data/'
-    routeFile = 'routeData'
-
-    path = routepath
-    filename = routeFile
+    
     i = 0
 
     while i < 10:
@@ -53,6 +58,7 @@ def main():
             #print(row)
             if c == 0:
                 c+=1
+                writer.writerow(['Placeing', 'Score', 'Name', 'Birth Year', 'Country', 'Height (cm)', 'Weight (Kg)', 'Started Climbing', 'Climber BMI'])
                 continue
         
             p = row[0]
