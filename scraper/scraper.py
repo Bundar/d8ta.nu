@@ -36,8 +36,8 @@ time.sleep(1)
 print("Driver set up")
 
 i = 0
-startI = 0
-while(i < 1):
+startI = 1
+while(i < 7):
     print("LOG: Processing data file #" + str(i))
     content = driver.page_source
     soup = BeautifulSoup(content, features="lxml")

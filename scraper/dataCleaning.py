@@ -50,17 +50,17 @@ def main():
         fromFile = open(path+filename+str(i)+'.csv', 'r', newline='')
         toFile  = open(path+'cleaned-'+filename+str(i)+'.csv', 'w', newline='')
 
-        obj = csv.reader(fromFile, delimiter = ' ', quotechar = '|', quoting = csv.QUOTE_MINIMAL)
+        obj = csv.reader(fromFile, delimiter = ',', quotechar = '"', quoting = csv.QUOTE_MINIMAL)
         writer = csv.writer(toFile, delimiter = ',', quotechar='"', quoting = csv.QUOTE_MINIMAL)
 
         c = 0
         for row in obj:
-            #print(row)
+            print(row)
             if c == 0:
                 c+=1
                 writer.writerow(['Placeing', 'Score', 'Name', 'Birth Year', 'Country', 'Height (cm)', 'Weight (Kg)', 'Started Climbing', 'Climber BMI'])
                 continue
-        
+             
             p = row[0]
             sc = row[1]
             nm = row[2]
